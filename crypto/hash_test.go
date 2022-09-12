@@ -3,7 +3,7 @@ package crypto
 import (
 	"testing"
 
-	. "github.com/ysv/ripple/testing"
+	. "github.com/sologenic/go-ripple/testing"
 	. "gopkg.in/check.v1"
 )
 

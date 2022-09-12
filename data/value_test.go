@@ -1,7 +1,7 @@
 package data
 
 import (
-	. "github.com/ysv/ripple/testing"
+	. "github.com/sologenic/go-ripple/testing"
 	. "gopkg.in/check.v1"
 )
 

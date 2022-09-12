@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	. "github.com/ysv/ripple/testing"
+	. "github.com/sologenic/go-ripple/testing"
 	. "gopkg.in/check.v1"
 )
 

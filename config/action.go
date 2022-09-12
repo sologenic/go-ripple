@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/ysv/ripple/data"
-	"github.com/ysv/ripple/websockets"
+	"github.com/sologenic/go-ripple/data"
+	"github.com/sologenic/go-ripple/websockets"
 )
 
 type Action struct {

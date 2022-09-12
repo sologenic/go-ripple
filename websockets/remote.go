@@ -15,7 +15,7 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/gorilla/websocket"
-	"github.com/ysv/ripple/data"
+	"github.com/sologenic/go-ripple/data"
 )
 
 const (

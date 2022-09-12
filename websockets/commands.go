@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync/atomic"
 
-	"github.com/ysv/ripple/data"
+	"github.com/sologenic/go-ripple/data"
 )
 
 var counter uint64

@@ -3,7 +3,7 @@ package data
 import (
 	"encoding/json"
 
-	internal "github.com/ysv/ripple/testing"
+	internal "github.com/sologenic/go-ripple/testing"
 	. "gopkg.in/check.v1"
 )
 

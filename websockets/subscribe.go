@@ -3,7 +3,7 @@ package websockets
 import (
 	"encoding/json"
 
-	"github.com/ysv/ripple/data"
+	"github.com/sologenic/go-ripple/data"
 )
 
 // Fields from subscribed ledger stream messages
