@@ -314,3 +314,17 @@ type GatewayBalancesResult struct {
 	LedgerHash  string             `json:"ledger_hash"`
 	Validated   bool               `json:"validated"`
 }
+
+type ServerInfoCommand struct {
+	*Command
+	Result *ServerInfoResult `json:"result,omitempty"`
+}
+
+type ServerInfoResult struct {
+	Info ServerInfo `json:"info"`
+}
+
+type ServerInfo struct {
+	BuildVersion string `json:"build_version"`
+	HostID       string `json:"hostid"`
+}
