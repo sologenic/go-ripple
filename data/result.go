@@ -64,6 +64,8 @@ const (
 	tecTOO_SOON
 )
 
+const tecOBJECT_NOT_FOUND = 160
+
 const (
 	// Transaction Errors
 	// -399 .. -300: L Local error (transaction fee inadequate, exceeds local limit)
@@ -230,6 +232,8 @@ var resultNames = map[TransactionResult]struct {
 	tecKILLED:                {"tecKILLED", "FillOrKill offer killed."},
 	tecHAS_OBLIGATIONS:       {"tecHAS_OBLIGATIONS", "The account cannot be deleted since it has obligations."},
 	tecTOO_SOON:              {"tecTOO_SOON", "It is too early to attempt the requested operation. Please wait."},
+
+	tecOBJECT_NOT_FOUND: {"tecOBJECT_NOT_FOUND", "One of the objects specified by this transaction did not exist in the ledger. (Added by the NonFungibleTokensV1_1 amendment.)"},
 
 	tefFAILURE:          {"tefFAILURE", "Failed to apply."},
 	tefALREADY:          {"tefALREADY", "The exact transaction was already in this ledger."},
