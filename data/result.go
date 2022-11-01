@@ -64,7 +64,18 @@ const (
 	tecTOO_SOON
 )
 
-const tecOBJECT_NOT_FOUND = 160
+// Results added by the NonFungibleTokensV1_1 amendment (https://xrpl.org/known-amendments.html#nonfungibletokensv1_1).
+const (
+	tecMAX_SEQUENCE_REACHED TransactionResult = iota + 153
+	tecNO_SUITABLE_NFTOKEN_PAGE
+	tecNFTOKEN_BUY_SELL_MISMATCH
+	tecNFTOKEN_OFFER_TYPE_MISMATCH
+	tecCANT_ACCEPT_OWN_NFTOKEN_OFFER
+	tecINSUFFICIENT_FUNDS
+	_SKIPPED // 159 result code is skipped according to https://xrpl.org/tec-codes.html
+	tecOBJECT_NOT_FOUND
+	tecINSUFFICIENT_PAYMENT
+)
 
 const (
 	// Transaction Errors
@@ -233,7 +244,14 @@ var resultNames = map[TransactionResult]struct {
 	tecHAS_OBLIGATIONS:       {"tecHAS_OBLIGATIONS", "The account cannot be deleted since it has obligations."},
 	tecTOO_SOON:              {"tecTOO_SOON", "It is too early to attempt the requested operation. Please wait."},
 
-	tecOBJECT_NOT_FOUND: {"tecOBJECT_NOT_FOUND", "One of the objects specified by this transaction did not exist in the ledger. (Added by the NonFungibleTokensV1_1 amendment.)"},
+	tecMAX_SEQUENCE_REACHED: {"tecMAX_SEQUENCE_REACHED", "	A sequence number field is already at its maximum. This includes the MintedNFTokens field."},
+	tecNO_SUITABLE_NFTOKEN_PAGE: {"tecNO_SUITABLE_NFTOKEN_PAGE", "	The transaction tried to mint or acquire a non-fungible token but the account receiving the NFToken does not have a directory page that can hold it. This situation is rare."},
+	tecNFTOKEN_BUY_SELL_MISMATCH: {"tecNFTOKEN_BUY_SELL_MISMATCH", "	The NFTokenAcceptOffer transaction attempted to match incompatible offers to buy and sell a non-fungible token."},
+	tecNFTOKEN_OFFER_TYPE_MISMATCH: {"tecNFTOKEN_OFFER_TYPE_MISMATCH", "	One or more of the offers specified in the transaction was not the right type of offer. (For example, a buy offer was specified in the NFTokenSellOffer field.)"},
+	tecCANT_ACCEPT_OWN_NFTOKEN_OFFER: {"tecCANT_ACCEPT_OWN_NFTOKEN_OFFER", "	The transaction tried to accept an offer that was placed by the same account to buy or sell a non-fungible token."},
+	tecINSUFFICIENT_FUNDS: {"tecINSUFFICIENT_FUNDS", "	One of the accounts involved does not hold enough of a necessary asset."},
+	tecOBJECT_NOT_FOUND: {"tecOBJECT_NOT_FOUND", "	One of the objects specified by this transaction did not exist in the ledger."},
+	tecINSUFFICIENT_PAYMENT: {"tecINSUFFICIENT_PAYMENT", "	The amount specified is not enough to pay all fees involved in the transaction. For example, when trading a non-fungible token, the buy amount may not be enough to pay both the broker fee and the sell amount."},
 
 	tefFAILURE:          {"tefFAILURE", "Failed to apply."},
 	tefALREADY:          {"tefALREADY", "The exact transaction was already in this ledger."},
