@@ -98,6 +98,7 @@ func (effect *NodeEffect) AffectedNode() (*AffectedNode, LedgerEntry, LedgerEntr
 	default:
 		panic(fmt.Sprintf("Unknown LedgerEntryState: %+v", effect))
 	}
+	// Output the fields parsed
 	previous = node.PreviousFields
 	if previous == nil {
 		previous = LedgerEntryFactory[final.GetLedgerEntryType()]()

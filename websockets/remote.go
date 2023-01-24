@@ -465,11 +465,14 @@ func (r *Remote) BookOffers(taker data.Account, ledgerIndex interface{}, pays, g
 }
 
 // Load Gateway Balances for the given account
+// IMPORTANT: Run this against the endpoint xrplcluster.com since not all endpoints support this command!
 func (r *Remote) GatewayBalances(a data.Account) (*GatewayBalancesResult, error) {
 	cmd := &GatewayBalances{
-		Command: newCommand("gateway_balances"),
-		Account: a,
-		Strict:  true,
+		Command:     newCommand("gateway_balances"),
+		Account:     a,
+		Strict:      true,
+		LedgerIndex: "validated",
+		HotWallet:   []data.Account{},
 	}
 	r.outgoing <- cmd
 	<-cmd.Ready
