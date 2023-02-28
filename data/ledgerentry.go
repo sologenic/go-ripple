@@ -221,6 +221,14 @@ type NFTokenOffer struct {
 	Flags uint32 `json:",omitempty"`
 }
 
+type Amm struct {
+	leBase
+	Flags      *LedgerEntryFlag `json:",omitempty"`
+	Amount     Amount           `json:",omitempty"`
+	Amount2    Amount           `json:",omitempty"`
+	TradingFee uint32           `json:",omitempty"`
+}
+
 func (a *AccountRoot) Affects(account Account) bool {
 	return a.Account != nil && a.Account.Equals(account)
 }
@@ -258,6 +266,7 @@ func (d *DepositPreAuth) Affects(account Account) bool {
 
 func (p *NFTokenPage) Affects(account Account) bool  { return false }
 func (p *NFTokenOffer) Affects(account Account) bool { return false }
+func (p *Amm) Affects(account Account) bool          { return false }
 
 func (le *leBase) GetType() string                     { return ledgerEntryNames[le.LedgerEntryType] }
 func (le *leBase) GetLedgerEntryType() LedgerEntryType { return le.LedgerEntryType }

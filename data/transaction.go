@@ -226,6 +226,13 @@ type UNLModify struct {
 	UNLModifyValidator *VariableLength `json:",omitempty"`
 }
 
+type AMMCreate struct {
+	TxBase
+	Amount     Amount `json:",omitempty"`
+	Amount2    Amount `json:",omitempty"`
+	TradingFee uint16 `json:",omitempty"` // Between 0 and 1000 (0 and 1%)
+}
+
 func (t *TxBase) RealSequence() uint32 {
 	if t.Sequence == 0 {
 		return t.TicketSequence
