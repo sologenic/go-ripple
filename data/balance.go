@@ -8,14 +8,14 @@ import (
 // Transfer is a directional representation of a RippleState or AccountRoot balance change.
 // Payments and OfferCreates lead to the creation of zero or more Transfers.
 //
-// 	TransitFee is earned by the Issuer
-// 	QualityIn and QualityOut are earned by the Liquidity Provider and can be negative.
+//	TransitFee is earned by the Issuer
+//	QualityIn and QualityOut are earned by the Liquidity Provider and can be negative.
 //
 // Four scenarios:
-// 	1. XRP -> XRP
-// 	2. XRP -> IOU/Issuer 			Requires an orderbook
-// 	3. IOU/Issuer -> XRP			Requires an orderbook
-// 	4. IOU/IssuerA <-> IOU/IssuerB		Also known as Rippling, requires an account which trusts both currency/issuer pairs
+//  1. XRP -> XRP
+//  2. XRP -> IOU/Issuer 			Requires an orderbook
+//  3. IOU/Issuer -> XRP			Requires an orderbook
+//  4. IOU/IssuerA <-> IOU/IssuerB		Also known as Rippling, requires an account which trusts both currency/issuer pairs
 type Transfer struct {
 	Source             Account
 	Destination        Account
@@ -68,7 +68,7 @@ func (m *BalanceMap) Add(account *Account, counterparty *Account, balance, chang
 }
 
 func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
-	if txm.GetTransactionType() != OFFER_CREATE && txm.GetTransactionType() != PAYMENT {
+	if txm.GetTransactionType() != OFFER_CREATE && txm.GetTransactionType() != PAYMENT && txm.GetTransactionType() != AMM_DEPOSIT && txm.GetTransactionType() != AMM_WITHDRAW {
 		return nil, nil
 	}
 	balanceMap := BalanceMap{}
@@ -85,13 +85,39 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 				state := node.CreatedNode.NewFields.(*RippleState)
 				balanceMap.Add(&state.LowLimit.Issuer, &state.HighLimit.Issuer, state.Balance.Value, state.Balance.Value, &state.Balance.Currency)
 				balanceMap.Add(&state.HighLimit.Issuer, &state.LowLimit.Issuer, state.Balance.Value.Negate(), state.Balance.Value.Negate(), &state.Balance.Currency)
+			case AMMROOT:
+				state := node.CreatedNode.NewFields.(*AMM)
+				balanceMap.Add(&state.LPTokenBalance.Issuer,
+					&state.LPTokenBalance.Issuer,
+					state.LPTokenBalance.Value,
+					state.LPTokenBalance.Value,
+					&state.LPTokenBalance.Currency)
+				fmt.Printf("AMMROOT: %+v", state)
+				// TODO: Implement?
 			}
 		case node.DeletedNode != nil:
 			switch node.DeletedNode.LedgerEntryType {
 			case RIPPLE_STATE:
-				//?
+				// A deletion (complete termination of a token) can lead to having to use
+				// the deleted node to determine the balance of the counterparty.
+				var (
+					previous = node.DeletedNode.PreviousFields.(*RippleState)
+					current  = node.DeletedNode.FinalFields.(*RippleState)
+				)
+				if previous.Balance == nil {
+					//flag change
+					continue
+				}
+				change, err := current.Balance.Subtract(previous.Balance)
+				if err != nil {
+					return nil, err
+				}
+				balanceMap.Add(&current.LowLimit.Issuer, &current.HighLimit.Issuer, current.Balance.Value, change.Value, &current.Balance.Currency)
+				balanceMap.Add(&current.HighLimit.Issuer, &current.LowLimit.Issuer, current.Balance.Value.Negate(), change.Value.Negate(), &current.Balance.Currency)
 			case ACCOUNT_ROOT:
 				return nil, fmt.Errorf("Deleted AccountRoot!")
+			case AMMROOT:
+				// Looks like it is not required to analyze
 			}
 		case node.ModifiedNode != nil:
 			if node.ModifiedNode.PreviousFields == nil {
@@ -139,6 +165,21 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 				}
 				balanceMap.Add(&current.LowLimit.Issuer, &current.HighLimit.Issuer, current.Balance.Value, change.Value, &current.Balance.Currency)
 				balanceMap.Add(&current.HighLimit.Issuer, &current.LowLimit.Issuer, current.Balance.Value.Negate(), change.Value.Negate(), &current.Balance.Currency)
+			case AMMROOT:
+				// Used to retrieve the currency & issuer for lptokens while parsing balances
+				var (
+					previous = node.ModifiedNode.PreviousFields.(*AMM)
+					current  = node.ModifiedNode.FinalFields.(*AMM)
+				)
+				if previous.LPTokenBalance == nil {
+					//Vote change, bid slot change
+					continue
+				}
+				change, err := current.LPTokenBalance.Subtract(previous.LPTokenBalance)
+				if err != nil {
+					return nil, err
+				}
+				balanceMap.Add(&current.LPTokenBalance.Issuer, &current.LPTokenBalance.Issuer, current.LPTokenBalance.Value, change.Value, &current.LPTokenBalance.Currency)
 			}
 		}
 	}

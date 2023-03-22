@@ -150,7 +150,7 @@ func NewHash256(value interface{}) (*Hash256, error) {
 	switch v := value.(type) {
 	case []byte:
 		if len(v) != 32 {
-			return nil, fmt.Errorf("NewHash256: Wrong length %X", value)
+			return nil, fmt.Errorf("NewHash256: Wrong length (%d) for %X", len(v), value)
 		}
 		copy(h[:], v)
 	case string:
