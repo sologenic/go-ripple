@@ -123,6 +123,8 @@ var TxFactory = [...]func() Transaction{
 	AMM_CREATE:           func() Transaction { return &AMMCreate{TxBase: TxBase{TransactionType: AMM_CREATE}} },
 	AMM_DEPOSIT:          func() Transaction { return &AMMDeposit{TxBase: TxBase{TransactionType: AMM_DEPOSIT}} },
 	AMM_WITHDRAW:         func() Transaction { return &AMMWithdraw{TxBase: TxBase{TransactionType: AMM_WITHDRAW}} },
+	AMM_VOTE:             func() Transaction { return &AMMVote{TxBase: TxBase{TransactionType: AMM_VOTE}} },
+	AMM_BID:              func() Transaction { return &AMMBid{TxBase: TxBase{TransactionType: AMM_BID}} },
 
 	// The next types are not fully supported. They just added to avoid "Unknown TransactionType" error.
 	DEPOSIT_PREAUTH: func() Transaction { return &DepositPreauth{TxBase: TxBase{TransactionType: DEPOSIT_PREAUTH}} },
@@ -199,6 +201,8 @@ var txNames = [...]string{
 	AMM_CREATE:           "AMMCreate",
 	AMM_DEPOSIT:          "AMMDeposit",
 	AMM_WITHDRAW:         "AMMWithdraw",
+	AMM_VOTE:             "AMMVote",
+	AMM_BID:              "AMMBid",
 }
 
 var txTypes = map[string]TransactionType{
@@ -232,6 +236,8 @@ var txTypes = map[string]TransactionType{
 	"AMMCreate":            AMM_CREATE,
 	"AMMDeposit":           AMM_DEPOSIT,
 	"AMMWithdraw":          AMM_WITHDRAW,
+	"AMMVote":              AMM_VOTE,
+	"AMMBid":               AMM_BID,
 }
 
 var HashableTypes []string

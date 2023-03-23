@@ -227,6 +227,13 @@ type VoteEntry struct {
 	VoteWeight uint32  `json:",omitempty"`
 }
 
+type AuctionSlot struct {
+	Account       Account `json:",omitempty"`
+	DiscountedFee uint32  `json:",omitempty"`
+	Expiration    *uint32 `json:",omitempty"`
+	Price         Amount  `json:",omitempty"`
+}
+
 type AMM struct {
 	leBase
 	Flags          *LedgerEntryFlag `json:",omitempty"`
@@ -236,6 +243,7 @@ type AMM struct {
 	LPTokenBalance *Amount          `json:",omitempty"`
 	TradingFee     uint32           `json:",omitempty"`
 	VoteSlots      []VoteEntry      `json:",omitempty"`
+	AuctionSlot    *AuctionSlot     `json:",omitempty"`
 }
 
 func (a *AccountRoot) Affects(account Account) bool {

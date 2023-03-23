@@ -42,7 +42,6 @@ type Seed [16]byte
 var zero256 Hash256
 var zeroAccount Account
 var zeroPublicKey PublicKey
-var zeroSeed Seed
 
 func (h *ExtendedHash256) UnmarshalJSON(b []byte) error {
 	s := strings.ReplaceAll(string(b), "\"", "")
