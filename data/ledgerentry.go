@@ -221,12 +221,29 @@ type NFTokenOffer struct {
 	Flags uint32 `json:",omitempty"`
 }
 
-type Amm struct {
+type VoteEntry struct {
+	Account    Account `json:",omitempty"`
+	TradingFee uint32  `json:",omitempty"`
+	VoteWeight uint32  `json:",omitempty"`
+}
+
+type AuctionSlot struct {
+	Account       Account `json:",omitempty"`
+	DiscountedFee uint32  `json:",omitempty"`
+	Expiration    *uint32 `json:",omitempty"`
+	Price         Amount  `json:",omitempty"`
+}
+
+type AMM struct {
 	leBase
-	Flags      *LedgerEntryFlag `json:",omitempty"`
-	Amount     Amount           `json:",omitempty"`
-	Amount2    Amount           `json:",omitempty"`
-	TradingFee uint32           `json:",omitempty"`
+	Flags          *LedgerEntryFlag `json:",omitempty"`
+	Asset          Asset            `json:",omitempty"`
+	Asset2         Asset            `json:",omitempty"`
+	AMMAccount     *Account         `json:",omitempty"`
+	LPTokenBalance *Amount          `json:",omitempty"`
+	TradingFee     uint32           `json:",omitempty"`
+	VoteSlots      []VoteEntry      `json:",omitempty"`
+	AuctionSlot    *AuctionSlot     `json:",omitempty"`
 }
 
 func (a *AccountRoot) Affects(account Account) bool {
@@ -266,7 +283,7 @@ func (d *DepositPreAuth) Affects(account Account) bool {
 
 func (p *NFTokenPage) Affects(account Account) bool  { return false }
 func (p *NFTokenOffer) Affects(account Account) bool { return false }
-func (p *Amm) Affects(account Account) bool          { return false }
+func (p *AMM) Affects(account Account) bool          { return p.AMMAccount != nil }
 
 func (le *leBase) GetType() string                     { return ledgerEntryNames[le.LedgerEntryType] }
 func (le *leBase) GetLedgerEntryType() LedgerEntryType { return le.LedgerEntryType }

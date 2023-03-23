@@ -23,7 +23,7 @@ const (
 	DEPOSIT_PRE_AUTH LedgerEntryType = 0x70 // 'p'
 	NEGATIVE_UNL     LedgerEntryType = 0x4e // 'N'
 	NFTOKEN_PAGE     LedgerEntryType = 0x50 // 'P'
-	AMM              LedgerEntryType = 0x41 // 'A'
+	AMMROOT          LedgerEntryType = 0x41 // 'A'
 
 	// TODO: NFTOKEN_OFFER this needs to be tested because in source code it is defined as 0x37 but in doc as 0x0074
 	// source: https://github.com/ripple/rippled/pull/4101/files#diff-5b0d620062dd00fb5801519e62e857f3456075b1d9d02062b6a06bb0f64fffa5R162
@@ -90,7 +90,7 @@ var LedgerEntryFactory = [...]func() LedgerEntry{
 	NEGATIVE_UNL:     func() LedgerEntry { return &NegativeUNL{leBase: leBase{LedgerEntryType: NEGATIVE_UNL}} },
 	NFTOKEN_PAGE:     func() LedgerEntry { return &NFTokenPage{leBase: leBase{LedgerEntryType: NFTOKEN_PAGE}} },
 	NFTOKEN_OFFER:    func() LedgerEntry { return &NFTokenOffer{leBase: leBase{LedgerEntryType: NFTOKEN_OFFER}} },
-	AMM:              func() LedgerEntry { return &Amm{leBase: leBase{LedgerEntryType: AMM}} },
+	AMMROOT:          func() LedgerEntry { return &AMM{leBase: leBase{LedgerEntryType: AMMROOT}} },
 }
 
 var TxFactory = [...]func() Transaction{
@@ -121,6 +121,10 @@ var TxFactory = [...]func() Transaction{
 	NFTOKEN_CREATE_OFFER: func() Transaction { return &NFTokenCreateOffer{TxBase: TxBase{TransactionType: NFTOKEN_CREATE_OFFER}} },
 	NFTOKEN_MINT:         func() Transaction { return &NFTokenMint{TxBase: TxBase{TransactionType: NFTOKEN_MINT}} },
 	AMM_CREATE:           func() Transaction { return &AMMCreate{TxBase: TxBase{TransactionType: AMM_CREATE}} },
+	AMM_DEPOSIT:          func() Transaction { return &AMMDeposit{TxBase: TxBase{TransactionType: AMM_DEPOSIT}} },
+	AMM_WITHDRAW:         func() Transaction { return &AMMWithdraw{TxBase: TxBase{TransactionType: AMM_WITHDRAW}} },
+	AMM_VOTE:             func() Transaction { return &AMMVote{TxBase: TxBase{TransactionType: AMM_VOTE}} },
+	AMM_BID:              func() Transaction { return &AMMBid{TxBase: TxBase{TransactionType: AMM_BID}} },
 
 	// The next types are not fully supported. They just added to avoid "Unknown TransactionType" error.
 	DEPOSIT_PREAUTH: func() Transaction { return &DepositPreauth{TxBase: TxBase{TransactionType: DEPOSIT_PREAUTH}} },
@@ -143,7 +147,7 @@ var ledgerEntryNames = [...]string{
 	NEGATIVE_UNL:     "NegativeUNL",
 	NFTOKEN_PAGE:     "NFTokenPage",
 	NFTOKEN_OFFER:    "NFTokenOffer",
-	AMM:              "AMM",
+	AMMROOT:          "AMM",
 }
 
 var ledgerEntryTypes = map[string]LedgerEntryType{
@@ -163,7 +167,7 @@ var ledgerEntryTypes = map[string]LedgerEntryType{
 	"NegativeUNL":    NEGATIVE_UNL,
 	"NFTokenPage":    NFTOKEN_PAGE,
 	"NFTokenOffer":   NFTOKEN_OFFER,
-	"AMM":            AMM,
+	"AMM":            AMMROOT,
 }
 
 var txNames = [...]string{
@@ -195,6 +199,10 @@ var txNames = [...]string{
 	NFTOKEN_CREATE_OFFER: "NFTokenCreateOffer",
 	NFTOKEN_MINT:         "NFTokenMint",
 	AMM_CREATE:           "AMMCreate",
+	AMM_DEPOSIT:          "AMMDeposit",
+	AMM_WITHDRAW:         "AMMWithdraw",
+	AMM_VOTE:             "AMMVote",
+	AMM_BID:              "AMMBid",
 }
 
 var txTypes = map[string]TransactionType{
@@ -226,6 +234,10 @@ var txTypes = map[string]TransactionType{
 	"NFTokenCreateOffer":   NFTOKEN_CREATE_OFFER,
 	"NFTokenMint":          NFTOKEN_MINT,
 	"AMMCreate":            AMM_CREATE,
+	"AMMDeposit":           AMM_DEPOSIT,
+	"AMMWithdraw":          AMM_WITHDRAW,
+	"AMMVote":              AMM_VOTE,
+	"AMMBid":               AMM_BID,
 }
 
 var HashableTypes []string
