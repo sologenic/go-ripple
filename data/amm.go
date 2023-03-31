@@ -7,7 +7,8 @@ func (txm *TransactionWithMetaData) AMM() (*AMM, error) {
 		txm.GetTransactionType() != AMM_WITHDRAW &&
 		txm.GetTransactionType() != AMM_CREATE &&
 		txm.GetTransactionType() != AMM_VOTE &&
-		txm.GetTransactionType() != AMM_BID {
+		txm.GetTransactionType() != AMM_BID &&
+		txm.GetTransactionType() != PAYMENT {
 
 		return nil, nil
 	}
