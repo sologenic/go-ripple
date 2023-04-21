@@ -171,6 +171,14 @@ func (r *Remote) Tx(hash data.Hash256) (*TxResult, error) {
 	return cmd.Result, nil
 }
 
+// Ping sends a ping to the server and waits for a pong. Used for connection active/alive checks in low frequency sockets for early error detection (reduce chance of dead sockets)
+func (r *Remote) Ping() error {
+	if err := r.ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (r *Remote) accountTx(account data.Account, c chan *data.TransactionWithMetaData, pageSize int, minLedger, maxLedger int64) {
 	defer close(c)
 	cmd := newAccountTxCommand(account, pageSize, nil, minLedger, maxLedger)
