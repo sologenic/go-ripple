@@ -239,7 +239,7 @@ type AMM struct {
 	Flags          *LedgerEntryFlag `json:",omitempty"`
 	Asset          Asset            `json:",omitempty"`
 	Asset2         Asset            `json:",omitempty"`
-	AMMAccount     *Account         `json:",omitempty"`
+	Account        *Account         `json:",omitempty"`
 	LPTokenBalance *Amount          `json:",omitempty"`
 	TradingFee     uint32           `json:",omitempty"`
 	VoteSlots      []VoteEntry      `json:",omitempty"`
@@ -283,7 +283,7 @@ func (d *DepositPreAuth) Affects(account Account) bool {
 
 func (p *NFTokenPage) Affects(account Account) bool  { return false }
 func (p *NFTokenOffer) Affects(account Account) bool { return false }
-func (p *AMM) Affects(account Account) bool          { return p.AMMAccount != nil }
+func (p *AMM) Affects(account Account) bool          { return p.Account != nil }
 
 func (le *leBase) GetType() string                     { return ledgerEntryNames[le.LedgerEntryType] }
 func (le *leBase) GetLedgerEntryType() LedgerEntryType { return le.LedgerEntryType }
