@@ -2,14 +2,10 @@ package data
 
 import "fmt"
 
-func (txm *TransactionWithMetaData) AMM() (*AMM, error) {
-	if txm.GetTransactionType() != AMM_DEPOSIT &&
-		txm.GetTransactionType() != AMM_WITHDRAW &&
-		txm.GetTransactionType() != AMM_CREATE &&
-		txm.GetTransactionType() != AMM_VOTE &&
-		txm.GetTransactionType() != AMM_BID &&
-		txm.GetTransactionType() != PAYMENT {
+var txAmmAcceptedMap = map[TransactionType]bool{AMM_DEPOSIT: true, AMM_WITHDRAW: true, AMM_CREATE: true, AMM_VOTE: true, AMM_BID: true, PAYMENT: true}
 
+func (txm *TransactionWithMetaData) AMM() (*AMM, error) {
+	if !txAmmAcceptedMap[txm.GetTransactionType()] {
 		return nil, nil
 	}
 	for _, nodeAffect := range txm.MetaData.AffectedNodes {

@@ -67,10 +67,10 @@ func (m *BalanceMap) Add(account *Account, counterparty *Account, balance, chang
 	(*m)[*account].Add(counterparty, balance, change, currency)
 }
 
+var txBalanceAcceptedMap = map[TransactionType]bool{OFFER_CREATE: true, PAYMENT: true, AMM_DEPOSIT: true, AMM_WITHDRAW: true, AMM_CREATE: true}
+
 func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
-	if txm.GetTransactionType() != OFFER_CREATE && txm.GetTransactionType() != PAYMENT &&
-		txm.GetTransactionType() != AMM_DEPOSIT && txm.GetTransactionType() != AMM_WITHDRAW &&
-		txm.GetTransactionType() != AMM_CREATE {
+	if !txBalanceAcceptedMap[txm.GetTransactionType()] {
 		return nil, nil
 	}
 	balanceMap := BalanceMap{}
@@ -81,26 +81,20 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 			switch node.CreatedNode.LedgerEntryType {
 			case ACCOUNT_ROOT:
 				created := node.CreatedNode.NewFields.(*AccountRoot)
-				balanceMap.Add(created.Account, &zeroAccount, &zeroNative, created.Balance, &zeroCurrency)
+				balanceMap.Add(created.Account, &zeroAccount, created.Balance, created.Balance, &zeroCurrency)
 			case RIPPLE_STATE:
 				// New trust line
 				state := node.CreatedNode.NewFields.(*RippleState)
-				// Legacy behavior: The balances are calculated for a new trust line equal to the change value.
-				// This is inconsistent with the behavior of the modified node case.
-				if txm.GetTransactionType() == OFFER_CREATE || txm.GetTransactionType() == PAYMENT {
-					balanceMap.Add(&state.LowLimit.Issuer, &state.HighLimit.Issuer, state.Balance.Value, state.Balance.Value, &state.Balance.Currency)
-					balanceMap.Add(&state.HighLimit.Issuer, &state.LowLimit.Issuer, state.Balance.Value.Negate(), state.Balance.Value.Negate(), &state.Balance.Currency)
-				} else {
-					balanceMap.Add(&state.LowLimit.Issuer, &state.HighLimit.Issuer, &zeroNative, state.Balance.Value, &state.Balance.Currency)
-					balanceMap.Add(&state.HighLimit.Issuer, &state.LowLimit.Issuer, &zeroNative, state.Balance.Value.Negate(), &state.Balance.Currency)
-				}
+				balanceMap.Add(&state.LowLimit.Issuer, &state.HighLimit.Issuer, state.Balance.Value, state.Balance.Value, &state.Balance.Currency)
+				balanceMap.Add(&state.HighLimit.Issuer, &state.LowLimit.Issuer, state.Balance.Value.Negate(), state.Balance.Value.Negate(), &state.Balance.Currency)
 			case AMMROOT:
 				state := node.CreatedNode.NewFields.(*AMM)
 				balanceMap.Add(&state.LPTokenBalance.Issuer,
 					&state.LPTokenBalance.Issuer,
-					&zeroNative,
+					state.LPTokenBalance.Value,
 					state.LPTokenBalance.Value,
 					&state.LPTokenBalance.Currency)
+
 			}
 		case node.DeletedNode != nil:
 			switch node.DeletedNode.LedgerEntryType {
