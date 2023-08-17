@@ -54,6 +54,9 @@ func (s BalanceSlice) Less(i, j int) bool {
 }
 
 func (s *BalanceSlice) Add(counterparty *Account, balance, change *Value, currency *Currency) {
+	if change == nil || currency == nil {
+		return
+	}
 	*s = append(*s, Balance{*counterparty, *balance, *change, *currency})
 }
 
