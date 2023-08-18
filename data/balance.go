@@ -104,10 +104,13 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 			case RIPPLE_STATE:
 				// A deletion (complete termination of a token) can lead to having to use
 				// the deleted node to determine the balance of the counterparty.
-				var (
-					previous = node.DeletedNode.PreviousFields.(*RippleState)
-					current  = node.DeletedNode.FinalFields.(*RippleState)
-				)
+				var previous, current *RippleState
+				if node.DeletedNode.PreviousFields == nil || node.DeletedNode.FinalFields == nil {
+					continue
+				}
+				previous = node.DeletedNode.PreviousFields.(*RippleState)
+				current = node.DeletedNode.FinalFields.(*RippleState)
+
 				if previous.Balance == nil {
 					//flag change
 					continue
