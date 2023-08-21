@@ -29,6 +29,7 @@ type AccountRoot struct {
 	Domain         *VariableLength  `json:",omitempty"`
 	TickSize       *uint8           `json:",omitempty"`
 	TicketCount    *uint32          `json:",omitempty"`
+	AMMID          *Hash256         `json:",omitempty"`
 }
 
 type RippleState struct {
@@ -244,6 +245,7 @@ type AMM struct {
 	TradingFee     uint32           `json:",omitempty"`
 	VoteSlots      []VoteEntry      `json:",omitempty"`
 	AuctionSlot    *AuctionSlot     `json:",omitempty"`
+	LedgerIndex    *Hash256         `json:",omitempty"`
 }
 
 func (a *AccountRoot) Affects(account Account) bool {
@@ -297,4 +299,8 @@ func (le *leBase) GetPreviousTxnId() *Hash256          { return le.PreviousTxnID
 
 func (o *Offer) Ratio() *Value {
 	return o.TakerPays.Ratio(*o.TakerGets)
+}
+
+func (a *AMM) AMMID() *Hash256 {
+	return a.LedgerIndex
 }
