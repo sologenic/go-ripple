@@ -260,6 +260,17 @@ type AccountOffersResult struct {
 	Offers         data.AccountOfferSlice `json:"offers"`
 }
 
+type AMMInfoCommand struct {
+	*Command
+	Account data.Account   `json:"account"`
+	Result  *AMMInfoResult `json:"result,omitempty"`
+}
+
+type AMMInfoResult struct {
+	LedgerSequence uint32   `json:"ledger_current_index"`
+	AMMData        data.AMM `json:"amm"`
+}
+
 type BookOffersCommand struct {
 	*Command
 	LedgerIndex interface{}  `json:"ledger_index,omitempty"`

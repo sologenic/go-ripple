@@ -455,6 +455,22 @@ func (r *Remote) AccountOffers(account data.Account, ledgerIndex interface{}) (*
 	}
 }
 
+func (r *Remote) AMMInfo(account data.Account) (*AMMInfoResult, error) {
+	cmd := &AMMInfoCommand{
+		Command: newCommand("amm_info"),
+		Account: account,
+	}
+	r.outgoing <- cmd
+	<-cmd.Ready
+	if cmd.CommandError != nil {
+		return nil, cmd.CommandError
+	}
+	if cmd.Result == nil {
+		return nil, fmt.Errorf("Missing AMM info")
+	}
+	return cmd.Result, nil
+}
+
 func (r *Remote) BookOffers(taker data.Account, ledgerIndex interface{}, pays, gets data.Asset) (*BookOffersResult, error) {
 	cmd := &BookOffersCommand{
 		Command:     newCommand("book_offers"),
