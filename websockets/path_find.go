@@ -1,7 +1,7 @@
 package websockets
 
 import (
-	"github.com/sologenic/go-ripple/data"
+	"github.com/rubblelabs/ripple/data"
 )
 
 // https://ripple.com/build/rippled-apis/#path-find

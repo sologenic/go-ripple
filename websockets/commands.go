@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync/atomic"
 
-	"github.com/sologenic/go-ripple/data"
+	"github.com/rubblelabs/ripple/data"
 )
 
 var counter uint64
@@ -230,17 +230,17 @@ type AccountInfoResult struct {
 
 type AccountLinesCommand struct {
 	*Command
-	Account     data.Account          `json:"account"`
-	Limit       uint32                `json:"limit"`
-	LedgerIndex interface{}           `json:"ledger_index,omitempty"`
-	Marker      *data.ExtendedHash256 `json:"marker,omitempty"`
-	Result      *AccountLinesResult   `json:"result,omitempty"`
+	Account     data.Account        `json:"account"`
+	Limit       uint32              `json:"limit"`
+	LedgerIndex interface{}         `json:"ledger_index,omitempty"`
+	Marker      *data.Hash256       `json:"marker,omitempty"`
+	Result      *AccountLinesResult `json:"result,omitempty"`
 }
 
 type AccountLinesResult struct {
 	LedgerSequence *uint32               `json:"ledger_index"`
 	Account        data.Account          `json:"account"`
-	Marker         *data.ExtendedHash256 `json:"marker"`
+	Marker         *data.Hash256         `json:"marker"`
 	Lines          data.AccountLineSlice `json:"lines"`
 }
 
@@ -258,17 +258,6 @@ type AccountOffersResult struct {
 	Account        data.Account           `json:"account"`
 	Marker         *data.Hash256          `json:"marker"`
 	Offers         data.AccountOfferSlice `json:"offers"`
-}
-
-type AMMInfoCommand struct {
-	*Command
-	Account data.Account   `json:"account"`
-	Result  *AMMInfoResult `json:"result,omitempty"`
-}
-
-type AMMInfoResult struct {
-	LedgerSequence uint32   `json:"ledger_current_index"`
-	AMMData        data.AMM `json:"amm"`
 }
 
 type BookOffersCommand struct {
@@ -309,36 +298,4 @@ type FeeResult struct {
 	} `json:"levels"`
 	MaxQueueSize uint32 `json:"max_queue_size,string"`
 	Status       string `json:"status"`
-}
-
-// The ledger index in gateway balances is a string with the term "validated" as opposed to the ledger index in other places which is a uint32 with an actual ledger index
-type GatewayBalances struct {
-	*Command
-	Account     data.Account           `json:"account"`
-	Strict      bool                   `json:"strict"`
-	Result      *GatewayBalancesResult `json:"result,omitempty"`
-	LedgerIndex string                 `json:"ledger_index"`
-	HotWallet   []data.Account         `json:"hotwallet,omitempty"`
-}
-
-type GatewayBalancesResult struct {
-	Obligations *map[string]string `json:"obligations"`
-	Account     string             `json:"account"`
-	LedgerIndex uint32             `json:"ledger_index"`
-	LedgerHash  string             `json:"ledger_hash"`
-	Validated   bool               `json:"validated"`
-}
-
-type ServerInfoCommand struct {
-	*Command
-	Result *ServerInfoResult `json:"result,omitempty"`
-}
-
-type ServerInfoResult struct {
-	Info ServerInfo `json:"info"`
-}
-
-type ServerInfo struct {
-	BuildVersion string `json:"build_version"`
-	HostID       string `json:"hostid"`
 }

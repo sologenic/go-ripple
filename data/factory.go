@@ -23,24 +23,19 @@ const (
 	DEPOSIT_PRE_AUTH LedgerEntryType = 0x70 // 'p'
 	NEGATIVE_UNL     LedgerEntryType = 0x4e // 'N'
 	NFTOKEN_PAGE     LedgerEntryType = 0x50 // 'P'
+	NFTOKEN_OFFER    LedgerEntryType = 0x37 // '7'
 	AMMROOT          LedgerEntryType = 0x41 // 'A'
 
-	// TODO: NFTOKEN_OFFER this needs to be tested because in source code it is defined as 0x37 but in doc as 0x0074
-	// source: https://github.com/ripple/rippled/pull/4101/files#diff-5b0d620062dd00fb5801519e62e857f3456075b1d9d02062b6a06bb0f64fffa5R162
-	// doc: https://xrpl.org/nftokenoffer.html#nftokenoffer-fields
-	NFTOKEN_OFFER LedgerEntryType = 0x37 // '7'
-
 	// TransactionType values come from rippled's "TxFormats.h"
-	PAYMENT         TransactionType = 0
-	ESCROW_CREATE   TransactionType = 1
-	ESCROW_FINISH   TransactionType = 2
-	ACCOUNT_SET     TransactionType = 3
-	ESCROW_CANCEL   TransactionType = 4
-	SET_REGULAR_KEY TransactionType = 5
-	OFFER_CREATE    TransactionType = 7
-	OFFER_CANCEL    TransactionType = 8
-	TICKET_CREATE   TransactionType = 10
-	// TICKET_CANCEL   TransactionType = 11
+	PAYMENT              TransactionType = 0
+	ESCROW_CREATE        TransactionType = 1
+	ESCROW_FINISH        TransactionType = 2
+	ACCOUNT_SET          TransactionType = 3
+	ESCROW_CANCEL        TransactionType = 4
+	SET_REGULAR_KEY      TransactionType = 5
+	OFFER_CREATE         TransactionType = 7
+	OFFER_CANCEL         TransactionType = 8
+	TICKET_CREATE        TransactionType = 10
 	SIGNER_LIST_SET      TransactionType = 12
 	PAYCHAN_CREATE       TransactionType = 13
 	PAYCHAN_FUND         TransactionType = 14
@@ -48,6 +43,7 @@ const (
 	CHECK_CREATE         TransactionType = 16
 	CHECK_CASH           TransactionType = 17
 	CHECK_CANCEL         TransactionType = 18
+	SET_DEPOSIT_PREAUTH  TransactionType = 19
 	TRUST_SET            TransactionType = 20
 	ACCOUNT_DELETE       TransactionType = 21
 	NFTOKEN_MINT         TransactionType = 25
@@ -115,9 +111,9 @@ var TxFactory = [...]func() Transaction{
 	CHECK_CREATE:         func() Transaction { return &CheckCreate{TxBase: TxBase{TransactionType: CHECK_CREATE}} },
 	CHECK_CASH:           func() Transaction { return &CheckCash{TxBase: TxBase{TransactionType: CHECK_CASH}} },
 	CHECK_CANCEL:         func() Transaction { return &CheckCancel{TxBase: TxBase{TransactionType: CHECK_CANCEL}} },
-	NFTOKEN_ACCEPT_OFFER: func() Transaction { return &NFTokenAcceptOffer{TxBase: TxBase{TransactionType: NFTOKEN_ACCEPT_OFFER}} },
+	NFTOKEN_ACCEPT_OFFER: func() Transaction { return &NFTAcceptOffer{TxBase: TxBase{TransactionType: NFTOKEN_ACCEPT_OFFER}} },
 	NFTOKEN_BURN:         func() Transaction { return &NFTokenBurn{TxBase: TxBase{TransactionType: NFTOKEN_BURN}} },
-	NFTOKEN_CANCEL_OFFER: func() Transaction { return &NFTokenCancelOffer{TxBase: TxBase{TransactionType: NFTOKEN_CANCEL_OFFER}} },
+	NFTOKEN_CANCEL_OFFER: func() Transaction { return &NFTCancelOffer{TxBase: TxBase{TransactionType: NFTOKEN_CANCEL_OFFER}} },
 	NFTOKEN_CREATE_OFFER: func() Transaction { return &NFTokenCreateOffer{TxBase: TxBase{TransactionType: NFTOKEN_CREATE_OFFER}} },
 	NFTOKEN_MINT:         func() Transaction { return &NFTokenMint{TxBase: TxBase{TransactionType: NFTOKEN_MINT}} },
 	AMM_CREATE:           func() Transaction { return &AMMCreate{TxBase: TxBase{TransactionType: AMM_CREATE}} },
@@ -127,7 +123,6 @@ var TxFactory = [...]func() Transaction{
 	AMM_BID:              func() Transaction { return &AMMBid{TxBase: TxBase{TransactionType: AMM_BID}} },
 
 	// The next types are not fully supported. They just added to avoid "Unknown TransactionType" error.
-	DEPOSIT_PREAUTH: func() Transaction { return &DepositPreauth{TxBase: TxBase{TransactionType: DEPOSIT_PREAUTH}} },
 }
 
 var ledgerEntryNames = [...]string{
@@ -195,9 +190,10 @@ var txNames = [...]string{
 	DEPOSIT_PRE_AUTH:     "DepositPreauth",
 	NFTOKEN_ACCEPT_OFFER: "NFTokenAcceptOffer",
 	NFTOKEN_BURN:         "NFTokenBurn",
-	NFTOKEN_CANCEL_OFFER: "NFTokenCancelOffer",
-	NFTOKEN_CREATE_OFFER: "NFTokenCreateOffer",
+	SET_DEPOSIT_PREAUTH:  "DepositPreauth",
 	NFTOKEN_MINT:         "NFTokenMint",
+	NFTOKEN_CREATE_OFFER: "NFTokenCreateOffer",
+	NFTOKEN_CANCEL_OFFER: "NFTokenCancelOffer",
 	AMM_CREATE:           "AMMCreate",
 	AMM_DEPOSIT:          "AMMDeposit",
 	AMM_WITHDRAW:         "AMMWithdraw",
@@ -227,7 +223,7 @@ var txTypes = map[string]TransactionType{
 	"CheckCreate":          CHECK_CREATE,
 	"CheckCash":            CHECK_CASH,
 	"CheckCancel":          CHECK_CANCEL,
-	"DepositPreauth":       DEPOSIT_PREAUTH,
+	"DepositPreauth":       SET_DEPOSIT_PREAUTH,
 	"NFTokenAcceptOffer":   NFTOKEN_ACCEPT_OFFER,
 	"NFTokenBurn":          NFTOKEN_BURN,
 	"NFTokenCancelOffer":   NFTOKEN_CANCEL_OFFER,

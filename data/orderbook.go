@@ -143,21 +143,33 @@ func (s *AccountOfferSlice) Delete(offer *Offer) bool {
 }
 
 type AccountLine struct {
-	Account      Account        `json:"account"`
-	Balance      NonNativeValue `json:"balance"`
-	Currency     Currency       `json:"currency"`
-	Limit        NonNativeValue `json:"limit"`
-	LimitPeer    NonNativeValue `json:"limit_peer"`
-	NoRipple     bool           `json:"no_ripple"`
-	NoRipplePeer bool           `json:"no_ripple_peer"`
-	QualityIn    uint32         `json:"quality_in"`
-	QualityOut   uint32         `json:"quality_out"`
+	Account        Account        `json:"account"`
+	Balance        NonNativeValue `json:"balance"`
+	Currency       Currency       `json:"currency"`
+	Limit          NonNativeValue `json:"limit"`
+	LimitPeer      NonNativeValue `json:"limit_peer"`
+	NoRipple       bool           `json:"no_ripple"`
+	NoRipplePeer   bool           `json:"no_ripple_peer"`
+	Authorized     bool           `json:"authorized"`
+	AuthorizedPeer bool           `json:"peer_authorized"`
+	Freeze         bool           `json:"freeze"`
+	FreezePeer     bool           `json:"freeze_peer"`
+	QualityIn      uint32         `json:"quality_in"`
+	QualityOut     uint32         `json:"quality_out"`
 }
 
 func (l *AccountLine) Asset() *Asset {
 	return &Asset{
 		Currency: l.Currency.String(),
 		Issuer:   l.Account.String(),
+	}
+}
+
+func (l *AccountLine) BalanceAmount() *Amount {
+	return &Amount{
+		Value:    &l.Balance.Value,
+		Currency: l.Currency,
+		Issuer:   l.Account,
 	}
 }
 

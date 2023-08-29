@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/sologenic/go-ripple/config"
+	"github.com/rubblelabs/ripple/config"
 )
 
 var (

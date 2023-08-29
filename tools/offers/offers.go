@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sologenic/go-ripple/data"
-	"github.com/sologenic/go-ripple/terminal"
-	"github.com/sologenic/go-ripple/websockets"
+	"github.com/rubblelabs/ripple/data"
+	"github.com/rubblelabs/ripple/terminal"
+	"github.com/rubblelabs/ripple/websockets"
 )
 
 const usage = `Usage: offers [ripple address] [options]
@@ -17,8 +17,7 @@ Examples:
 offers rBxy23n7ZFbUpS699rFVj1V9ZVhAq6EGwC
 	Show all offers for account rBxy23n7ZFbUpS699rFVj1V9ZVhAq6EGwC
 
-Options:
-`
+Options:`
 
 var (
 	host = flag.String("host", "wss://s1.ripple.com:443", "websockets host")

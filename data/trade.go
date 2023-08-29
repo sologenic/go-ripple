@@ -14,9 +14,6 @@ type Trade struct {
 	Got              *Amount
 	Giver            Account
 	Taker            Account
-
-	FinalFields *Offer
-	PreviousFields *Offer
 }
 
 func newTrade(txm *TransactionWithMetaData, i int) (*Trade, error) {
@@ -47,8 +44,6 @@ func newTrade(txm *TransactionWithMetaData, i int) (*Trade, error) {
 		Got:              got,
 		Giver:            *v.Account,
 		Taker:            txm.Transaction.GetBase().Account,
-		FinalFields:      v,
-		PreviousFields:   p,
 	}
 	if action == Deleted {
 		trade.Op = "Delete"

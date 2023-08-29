@@ -49,9 +49,27 @@ func ReadPrefix(r Reader, nodeId Hash256) (Storer, error) {
 }
 
 func ReadLedger(r Reader, nodeId Hash256) (*Ledger, error) {
-	ledger := new(Ledger)
-	if err := read(r, &ledger.LedgerHeader); err != nil {
-		return nil, err
+	ledger := &Ledger{
+		LedgerHeader: LedgerHeader{
+			ParentCloseTime: NewRippleTime(0),
+			CloseTime:       NewRippleTime(0),
+		},
+	}
+	values := []interface{}{
+		&ledger.LedgerSequence,
+		&ledger.TotalXRP,
+		&ledger.PreviousLedger,
+		&ledger.TransactionHash,
+		&ledger.StateHash,
+		ledger.ParentCloseTime,
+		ledger.CloseTime,
+		&ledger.CloseResolution,
+		&ledger.CloseFlags,
+	}
+	for _, v := range values {
+		if err := read(r, v); err != nil {
+			return nil, err
+		}
 	}
 	ledger.Hash = nodeId
 	return ledger, nil
@@ -274,6 +292,12 @@ func readObject(r Reader, v *reflect.Value) error {
 				err := readObject(r, &s)
 				v.Set(s.Elem())
 				return err
+			case "NFToken":
+				var nft NFToken
+				s := reflect.ValueOf(&nft)
+				err := readObject(r, &s)
+				v.Set(s.Elem())
+				return err
 			case "Signer":
 				var signer Signer
 				s := reflect.ValueOf(&signer)
@@ -285,12 +309,6 @@ func readObject(r Reader, v *reflect.Value) error {
 				m := reflect.ValueOf(&majority)
 				err := readObject(r, &m)
 				v.Set(m.Elem())
-				return err
-			case "NonFungibleToken":
-				var nfToken NFToken
-				n := reflect.ValueOf(&nfToken)
-				err := readObject(r, &n)
-				v.Set(n.Elem())
 				return err
 			case "Memo":
 				var memo Memo

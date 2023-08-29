@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sologenic/go-ripple/data"
-	"github.com/sologenic/go-ripple/terminal"
-	"github.com/sologenic/go-ripple/websockets"
+	"github.com/rubblelabs/ripple/data"
+	"github.com/rubblelabs/ripple/terminal"
+	"github.com/rubblelabs/ripple/websockets"
 )
 
 const usage = `Usage: book [currency currency] [options]
@@ -17,8 +17,7 @@ Examples:
 book XRP USD/rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B
 	Show all offers for where the taker pays USD/rvYAfWj5gh67oV6fW32ZzP3Aw4Eubs59B and the taker gets XRP
 
-Options:
-`
+Options:`
 
 var (
 	host = flag.String("host", "wss://s1.ripple.com:443", "websockets host")

@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math"
+	"strings"
 	"unicode"
 )
 
@@ -29,17 +30,18 @@ func NewCurrency(s string) (Currency, error) {
 		return zeroCurrency, nil
 	}
 	var currency Currency
-	if len(s) <= 3 {
+	switch len(s) {
+	case 3:
 		copy(currency[12:], []byte(s))
 		return currency, nil
-	} else if len(s) == 40 {
+	case 40:
 		c, err := hex.DecodeString(s)
 		if err != nil {
 			return currency, fmt.Errorf("Bad Currency: %s", s)
 		}
 		copy(currency[:], c)
 		return currency, nil
-	} else {
+	default:
 		return currency, fmt.Errorf("Bad Currency: %s", s)
 	}
 }
@@ -79,7 +81,7 @@ func (c Currency) Type() CurrencyType {
 		return CT_XRP
 	case c[0] == 0x00:
 		for i, b := range c {
-			if i < 12 && i > 14 && b != 0 {
+			if (i < 12 || i > 15) && b != 0 {
 				return CT_UNKNOWN
 			}
 		}
@@ -128,13 +130,13 @@ func (c Currency) Machine() string {
 			}
 		}
 		return string(c[12:15])
-	//case CT_UNKNOWN:
-	//	return strings.Map(func(r rune) rune {
-	//		if unicode.IsPrint(r) {
-	//			return r
-	//		}
-	//		return -1
-	//	}, string(c[:]))
+	case CT_UNKNOWN:
+		return strings.Map(func(r rune) rune {
+			if unicode.IsPrint(r) {
+				return r
+			}
+			return -1
+		}, string(c[:]))
 	default:
 		return string(b2h(c[:]))
 	}

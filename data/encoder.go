@@ -56,7 +56,23 @@ func raw(value interface{}, prefix HashPrefix, ignoreSigningFields bool) (Hash25
 func writeRaw(w io.Writer, value interface{}, ignoreSigningFields bool) error {
 	switch v := value.(type) {
 	case *Ledger:
-		return write(w, v.LedgerHeader)
+		values := []interface{}{
+			v.LedgerSequence,
+			v.TotalXRP,
+			v.PreviousLedger,
+			v.TransactionHash,
+			v.StateHash,
+			v.ParentCloseTime,
+			v.CloseTime,
+			v.CloseResolution,
+			v.CloseFlags,
+		}
+		for _, value := range values {
+			if err := write(w, value); err != nil {
+				return err
+			}
+		}
+		return nil
 	case *InnerNode:
 		return write(w, v.Children)
 	case *Validation:
@@ -164,13 +180,13 @@ func getFields(v *reflect.Value, depth int) fieldSlice {
 		if f.Kind() == reflect.Ptr {
 			f = f.Elem()
 		}
-		if !f.IsValid() || !f.CanInterface() || (f.Kind() == reflect.Slice && f.Len() == 0) {
+		if !f.IsValid() || (f.Kind() == reflect.Slice && f.Len() == 0) {
 			continue
 		}
 		switch encoding.typ {
 		case ST_UINT8, ST_UINT16, ST_UINT32, ST_UINT64:
 			fields.Append(encoding, f.Addr().Interface(), nil)
-		case ST_HASH128, ST_HASH256, ST_AMOUNT, ST_VL, ST_ACCOUNT, ST_HASH160, ST_PATHSET, ST_VECTOR256:
+		case ST_HASH96, ST_HASH128, ST_HASH160, ST_HASH192, ST_HASH256, ST_HASH384, ST_HASH512, ST_AMOUNT, ST_VL, ST_ACCOUNT, ST_PATHSET, ST_VECTOR256:
 			fields.Append(encoding, f.Addr().Interface(), nil)
 		case ST_ARRAY:
 			var children fieldSlice

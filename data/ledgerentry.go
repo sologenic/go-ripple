@@ -18,7 +18,6 @@ type AccountRoot struct {
 	Sequence       *uint32          `json:",omitempty"`
 	Balance        *Value           `json:",omitempty"`
 	OwnerCount     *uint32          `json:",omitempty"`
-	MintedNFTokens *uint32          `json:",omitempty"`
 	AccountTxnID   *Hash256         `json:",omitempty"`
 	RegularKey     *RegularKey      `json:",omitempty"`
 	EmailHash      *Hash128         `json:",omitempty"`
@@ -29,6 +28,9 @@ type AccountRoot struct {
 	Domain         *VariableLength  `json:",omitempty"`
 	TickSize       *uint8           `json:",omitempty"`
 	TicketCount    *uint32          `json:",omitempty"`
+	NFTokenMinter  *Account         `json:",omitempty"`
+	MintedNFTokens *uint32          `json:",omitempty"`
+	BurnedNFTokens *uint32          `json:",omitempty"`
 	AMMID          *Hash256         `json:",omitempty"`
 }
 
@@ -133,8 +135,9 @@ type Escrow struct {
 }
 
 type SignerEntry struct {
-	Account      *Account `json:",omitempty"`
-	SignerWeight *uint16  `json:",omitempty"`
+	Account       *Account `json:",omitempty"`
+	SignerWeight  *uint16  `json:",omitempty"`
+	WalletLocator *Hash256 `json:",omitempty"`
 }
 
 type SignerList struct {
@@ -188,40 +191,31 @@ type Check struct {
 
 type DepositPreAuth struct {
 	leBase
+	Flags     *LedgerEntryFlag `json:",omitempty"`
 	Account   *Account         `json:",omitempty"`
 	Authorize *Account         `json:",omitempty"`
-	Flags     *LedgerEntryFlag `json:",omitempty"`
 	OwnerNode *NodeIndex       `json:",omitempty"`
 }
 
-type NFToken struct {
-	NFTokenID Hash256        `json:",omitempty"`
-	URI       VariableLength `json:",omitempty"`
-}
-
-// NFTokens is defined as map. Doesn't work properly unless defined like this.
-type NFTokens []map[string]NFToken
-
 type NFTokenPage struct {
 	leBase
-	Flags           LedgerEntryFlag `json:",omitempty"`
-	PreviousPageMin *Hash256        `json:",omitempty"`
-	NextPageMin     *Hash256        `json:",omitempty"`
-	NFTokens        NFTokens        `json:",omitempty"`
+	Flags           *LedgerEntryFlag `json:",omitempty"`
+	PreviousPageMin *Hash256         `json:",omitempty"`
+	NextPageMin     *Hash256         `json:",omitempty"`
+	NFTokens        []NFToken        `json:",omitempty"`
 }
 
 type NFTokenOffer struct {
 	leBase
-	Owner       Account  `json:",omitempty"`
-	NFTokenID   Hash256  `json:",omitempty"`
-	Amount      Amount   `json:",omitempty"`
-	Expiration  *uint32  `json:",omitempty"`
-	Destination *Account `json:",omitempty"`
-	//OwnerNode        *VariableLength `json:",omitempty"`
-	//NFTokenOfferNode *VariableLength `json:",omitempty"`
-	Flags uint32 `json:",omitempty"`
+	Flags            *LedgerEntryFlag `json:",omitempty"`
+	Owner            *Account         `json:",omitempty"`
+	NFTokenID        *Hash256         `json:",omitempty"`
+	Amount           *Amount          `json:",omitempty"`
+	OwnerNode        *NodeIndex       `json:",omitempty"`
+	NFTokenOfferNode *NodeIndex       `json:",omitempty"`
+	Destination      *Account         `json:",omitempty"`
+	Expiration       *uint32          `json:",omitempty"`
 }
-
 type VoteEntry struct {
 	Account    Account `json:",omitempty"`
 	TradingFee uint32  `json:",omitempty"`
@@ -283,9 +277,15 @@ func (d *DepositPreAuth) Affects(account Account) bool {
 	return (d.Account != nil && d.Account.Equals(account)) || (d.Authorize != nil && d.Authorize.Equals(account))
 }
 
-func (p *NFTokenPage) Affects(account Account) bool  { return false }
-func (p *NFTokenOffer) Affects(account Account) bool { return false }
-func (p *AMM) Affects(account Account) bool          { return p.Account != nil }
+func (tp *NFTokenPage) Affects(account Account) bool {
+	return false
+}
+
+func (to *NFTokenOffer) Affects(account Account) bool {
+	return (to.Owner != nil && to.Owner.Equals(account)) || (to.Destination != nil && to.Destination.Equals(account))
+}
+
+func (p *AMM) Affects(account Account) bool { return p.Account != nil }
 
 func (le *leBase) GetType() string                     { return ledgerEntryNames[le.LedgerEntryType] }
 func (le *leBase) GetLedgerEntryType() LedgerEntryType { return le.LedgerEntryType }

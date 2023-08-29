@@ -46,10 +46,10 @@ func (k *ecdsaKey) generateKey(sequence uint32) *btcec.PrivateKey {
 	copy(seed, k.PubKey().SerializeCompressed())
 	binary.BigEndian.PutUint32(seed[btcec.PubKeyBytesLenCompressed:], sequence)
 	key := newKey(seed)
-	rawECDSAKey := k.ToECDSA()
-	rawECDSAKey.D.Add(rawECDSAKey.D, rawECDSAKey.D).Mod(rawECDSAKey.D, order)
-	rawECDSAKey.X, rawECDSAKey.Y = rawECDSAKey.ScalarBaseMult(rawECDSAKey.D.Bytes())
-	return key
+	key.Key = *key.Key.Add(&k.Key)
+	return &btcec.PrivateKey{
+		Key: key.Key,
+	}
 }
 
 func (k *ecdsaKey) Id(sequence *uint32) []byte {
@@ -63,7 +63,8 @@ func (k *ecdsaKey) Private(sequence *uint32) []byte {
 	if sequence == nil {
 		return k.ToECDSA().D.Bytes()
 	}
-	return k.generateKey(*sequence).ToECDSA().D.Bytes()
+	b := k.generateKey(*sequence).Key.Bytes()
+	return b[:]
 }
 
 func (k *ecdsaKey) Public(sequence *uint32) []byte {

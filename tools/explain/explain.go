@@ -12,9 +12,9 @@ import (
 	"strconv"
 
 	"github.com/golang/glog"
-	"github.com/sologenic/go-ripple/data"
-	"github.com/sologenic/go-ripple/terminal"
-	"github.com/sologenic/go-ripple/websockets"
+	"github.com/rubblelabs/ripple/data"
+	"github.com/rubblelabs/ripple/terminal"
+	"github.com/rubblelabs/ripple/websockets"
 )
 
 const usage = `Usage: explain [tx hash|ledger sequence|ripple address|-] [options]
@@ -33,8 +33,7 @@ explain 955A4C0B7C66FC97EA4C72634CDCDBF50BB17AAA647EC6C8C592788E5B95173C
 explain -
 	Explain binary transactions received through stdin
 
-Options:
-`
+Options:`
 
 var argumentRegex = regexp.MustCompile(`(^[0-9a-fA-F]{64}$)|(^\d+$)|(^[r][a-km-zA-HJ-NP-Z0-9]{26,34}$)|(-)`)
 

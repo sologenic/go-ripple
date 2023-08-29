@@ -15,7 +15,7 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/gorilla/websocket"
-	"github.com/sologenic/go-ripple/data"
+	"github.com/rubblelabs/ripple/data"
 )
 
 const (
@@ -169,14 +169,6 @@ func (r *Remote) Tx(hash data.Hash256) (*TxResult, error) {
 		return nil, cmd.CommandError
 	}
 	return cmd.Result, nil
-}
-
-// Ping sends a ping to the server and waits for a pong. Used for connection active/alive checks in low frequency sockets for early error detection (reduce chance of dead sockets)
-func (r *Remote) Ping() error {
-	if err := r.ws.WriteMessage(websocket.PingMessage, []byte{}); err != nil {
-		return err
-	}
-	return nil
 }
 
 func (r *Remote) accountTx(account data.Account, c chan *data.TransactionWithMetaData, pageSize int, minLedger, maxLedger int64) {
@@ -393,7 +385,7 @@ func (r *Remote) AccountInfo(a data.Account) (*AccountInfoResult, error) {
 func (r *Remote) AccountLines(account data.Account, ledgerIndex interface{}) (*AccountLinesResult, error) {
 	var (
 		lines  data.AccountLineSlice
-		marker *data.ExtendedHash256
+		marker *data.Hash256
 	)
 	for {
 		cmd := &AccountLinesCommand{
@@ -455,22 +447,6 @@ func (r *Remote) AccountOffers(account data.Account, ledgerIndex interface{}) (*
 	}
 }
 
-func (r *Remote) AMMInfo(account data.Account) (*AMMInfoResult, error) {
-	cmd := &AMMInfoCommand{
-		Command: newCommand("amm_info"),
-		Account: account,
-	}
-	r.outgoing <- cmd
-	<-cmd.Ready
-	if cmd.CommandError != nil {
-		return nil, cmd.CommandError
-	}
-	if cmd.Result == nil {
-		return nil, fmt.Errorf("Missing AMM info")
-	}
-	return cmd.Result, nil
-}
-
 func (r *Remote) BookOffers(taker data.Account, ledgerIndex interface{}, pays, gets data.Asset) (*BookOffersResult, error) {
 	cmd := &BookOffersCommand{
 		Command:     newCommand("book_offers"),
@@ -479,24 +455,6 @@ func (r *Remote) BookOffers(taker data.Account, ledgerIndex interface{}, pays, g
 		TakerPays:   pays,
 		TakerGets:   gets,
 		Limit:       5000, // Marker not implemented....
-	}
-	r.outgoing <- cmd
-	<-cmd.Ready
-	if cmd.CommandError != nil {
-		return nil, cmd.CommandError
-	}
-	return cmd.Result, nil
-}
-
-// Load Gateway Balances for the given account
-// IMPORTANT: Run this against the endpoint xrplcluster.com since not all endpoints support this command!
-func (r *Remote) GatewayBalances(a data.Account) (*GatewayBalancesResult, error) {
-	cmd := &GatewayBalances{
-		Command:     newCommand("gateway_balances"),
-		Account:     a,
-		Strict:      true,
-		LedgerIndex: "validated",
-		HotWallet:   []data.Account{},
 	}
 	r.outgoing <- cmd
 	<-cmd.Ready
@@ -639,17 +597,4 @@ func dump(b []byte) string {
 	json.Unmarshal(b, &v)
 	out, _ := json.MarshalIndent(v, "", "  ")
 	return string(out)
-}
-
-// Synchronously requests account info
-func (r *Remote) ServerInfo() (*ServerInfoResult, error) {
-	cmd := &ServerInfoCommand{
-		Command: newCommand("server_info"),
-	}
-	r.outgoing <- cmd
-	<-cmd.Ready
-	if cmd.CommandError != nil {
-		return nil, cmd.CommandError
-	}
-	return cmd.Result, nil
 }
