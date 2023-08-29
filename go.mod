@@ -1,4 +1,4 @@
-module github.com/rubblelabs/ripple
+module github.com/sologenic/go-ripple
 
 go 1.20
 
