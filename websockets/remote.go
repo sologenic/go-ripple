@@ -455,10 +455,11 @@ func (r *Remote) AccountOffers(account data.Account, ledgerIndex interface{}) (*
 	}
 }
 
-func (r *Remote) AMMInfo(account data.Account) (*AMMInfoResult, error) {
+func (r *Remote) AMMInfo(asset data.Asset, asset2 data.Asset) (*AMMInfoResult, error) {
 	cmd := &AMMInfoCommand{
 		Command: newCommand("amm_info"),
-		Account: account,
+		Asset:   asset,
+		Asset2:  asset2,
 	}
 	r.outgoing <- cmd
 	<-cmd.Ready

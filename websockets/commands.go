@@ -262,13 +262,34 @@ type AccountOffersResult struct {
 
 type AMMInfoCommand struct {
 	*Command
-	Account data.Account   `json:"account"`
-	Result  *AMMInfoResult `json:"result,omitempty"`
+	Asset  data.Asset     `json:"asset"`
+	Asset2 data.Asset     `json:"asset2"`
+	Result *AMMInfoResult `json:"result,omitempty"`
 }
 
 type AMMInfoResult struct {
-	LedgerSequence uint32   `json:"ledger_current_index"`
-	AMMData        data.AMM `json:"amm"`
+	LedgerSequence uint32 `json:"ledger_current_index"`
+	AMMData        struct {
+		Amount       *data.Amount `json:",omitempty"`
+		Amount2      *data.Amount `json:",omitempty"`
+		AssetFrozen  bool         `json:"asset_frozen,omitempty"`
+		Asset2Frozen bool         `json:"asset2_frozen,omitempty"`
+		AuctionSlot  struct {
+			Account       data.Account `json:",omitempty"`
+			DiscountedFee uint32       `json:"discounted_fee,omitempty"`
+			Expiration    string       `json:",omitempty"`
+			Price         data.Amount  `json:",omitempty"`
+			TimeInterval  uint32       `json:"time_interval,omitempty"`
+		} `json:"auction_slot,omitempty"`
+		Account        *data.Account `json:",omitempty"`
+		LPTokenBalance *data.Amount  `json:"lp_token,omitempty"`
+		TradingFee     uint32        `json:"trading_fee,omitempty"`
+		VoteSlots      []struct {
+			Account    data.Account `json:",omitempty"`
+			TradingFee uint32       `json:"trading_fee,omitempty"`
+			VoteWeight uint32       `json:"vote_weight,omitempty"`
+		} `json:"vote_slots,omitempty"`
+	} `json:"amm"`
 }
 
 type BookOffersCommand struct {
