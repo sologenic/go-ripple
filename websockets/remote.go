@@ -467,7 +467,7 @@ func (r *Remote) AMMInfo(asset data.Asset, asset2 data.Asset) (*AMMInfoResult, e
 		return nil, cmd.CommandError
 	}
 	if cmd.Result == nil {
-		return nil, fmt.Errorf("Missing AMM info")
+		return nil, fmt.Errorf("missing AMM info")
 	}
 	return cmd.Result, nil
 }

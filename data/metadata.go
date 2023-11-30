@@ -36,6 +36,7 @@ type MetaData struct {
 	TransactionIndex  uint32
 	TransactionResult TransactionResult
 	DeliveredAmount   *Amount `json:"delivered_amount,omitempty"`
+	NFTokenID         *string `json:"nftoken_id,omitempty"`
 }
 
 type TransactionSlice []*TransactionWithMetaData
