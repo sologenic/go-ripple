@@ -32,6 +32,7 @@ type Balance struct {
 	Balance      Value
 	Change       Value
 	Currency     Currency
+	Issuer       string
 	AMMID        *Hash256
 }
 
@@ -54,21 +55,21 @@ func (s BalanceSlice) Less(i, j int) bool {
 	}
 }
 
-func (s *BalanceSlice) Add(counterparty *Account, balance, change *Value, currency *Currency, AMMID *Hash256) {
+func (s *BalanceSlice) Add(counterparty *Account, balance, change *Value, currency *Currency, issuer *string, AMMID *Hash256) {
 	if change == nil || currency == nil {
 		return
 	}
-	*s = append(*s, Balance{*counterparty, *balance, *change, *currency, AMMID})
+	*s = append(*s, Balance{*counterparty, *balance, *change, *currency, *issuer, AMMID})
 }
 
 type BalanceMap map[Account]*BalanceSlice
 
-func (m *BalanceMap) Add(account *Account, counterparty *Account, balance, change *Value, currency *Currency, AMMID *Hash256) {
+func (m *BalanceMap) Add(account *Account, counterparty *Account, balance, change *Value, currency *Currency, issuer *string, AMMID *Hash256) {
 	_, ok := (*m)[*account]
 	if !ok {
 		(*m)[*account] = &BalanceSlice{}
 	}
-	(*m)[*account].Add(counterparty, balance, change, currency, AMMID)
+	(*m)[*account].Add(counterparty, balance, change, currency, issuer, AMMID)
 }
 
 var txBalanceAcceptedMap = map[TransactionType]bool{OFFER_CREATE: true, PAYMENT: true, AMM_DEPOSIT: true, AMM_WITHDRAW: true, AMM_CREATE: true}
@@ -85,12 +86,13 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 			switch node.CreatedNode.LedgerEntryType {
 			case ACCOUNT_ROOT:
 				created := node.CreatedNode.NewFields.(*AccountRoot)
-				balanceMap.Add(created.Account, &zeroAccount, created.Balance, created.Balance, &zeroCurrency, created.AMMID)
+				issuer := created.Account.String()
+				balanceMap.Add(created.Account, &zeroAccount, created.Balance, created.Balance, &zeroCurrency, &issuer, created.AMMID)
 			case RIPPLE_STATE:
 				// New trust line
 				state := node.CreatedNode.NewFields.(*RippleState)
-				balanceMap.Add(&state.LowLimit.Issuer, &state.HighLimit.Issuer, state.Balance.Value, state.Balance.Value, &state.Balance.Currency, nil)
-				balanceMap.Add(&state.HighLimit.Issuer, &state.LowLimit.Issuer, state.Balance.Value.Negate(), state.Balance.Value.Negate(), &state.Balance.Currency, nil)
+				balanceMap.Add(&state.LowLimit.Issuer, &state.HighLimit.Issuer, state.Balance.Value, state.Balance.Value, &state.Balance.Currency, &state.LowLimit.Asset().Issuer, nil)
+				balanceMap.Add(&state.HighLimit.Issuer, &state.LowLimit.Issuer, state.Balance.Value.Negate(), state.Balance.Value.Negate(), &state.Balance.Currency, &state.LowLimit.Asset().Issuer, nil)
 			case AMMROOT:
 				state := node.CreatedNode.NewFields.(*AMM)
 				balanceMap.Add(&state.LPTokenBalance.Issuer,
@@ -98,6 +100,7 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 					state.LPTokenBalance.Value,
 					state.LPTokenBalance.Value,
 					&state.LPTokenBalance.Currency,
+					&state.LPTokenBalance.Asset().Issuer,
 					nil)
 
 			}
@@ -121,8 +124,8 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 				if err != nil {
 					return nil, err
 				}
-				balanceMap.Add(&current.LowLimit.Issuer, &current.HighLimit.Issuer, current.Balance.Value, change.Value, &current.Balance.Currency, nil)
-				balanceMap.Add(&current.HighLimit.Issuer, &current.LowLimit.Issuer, current.Balance.Value.Negate(), change.Value.Negate(), &current.Balance.Currency, nil)
+				balanceMap.Add(&current.LowLimit.Issuer, &current.HighLimit.Issuer, current.Balance.Value, change.Value, &current.Balance.Currency, &current.LowLimit.Asset().Issuer, nil)
+				balanceMap.Add(&current.HighLimit.Issuer, &current.LowLimit.Issuer, current.Balance.Value.Negate(), change.Value.Negate(), &current.Balance.Currency, &current.LowLimit.Asset().Issuer, nil)
 			case ACCOUNT_ROOT:
 				return nil, fmt.Errorf("Deleted AccountRoot!")
 			case AMMROOT:
@@ -156,7 +159,8 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 					}
 				}
 				if change.num != 0 {
-					balanceMap.Add(current.Account, &zeroAccount, current.Balance, change.Value, &zeroCurrency, current.AMMID)
+					issuer := ""
+					balanceMap.Add(current.Account, &zeroAccount, current.Balance, change.Value, &zeroCurrency, &issuer, current.AMMID)
 				}
 			case RIPPLE_STATE:
 				// Changed non-native balance
@@ -172,8 +176,13 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 				if err != nil {
 					return nil, err
 				}
-				balanceMap.Add(&current.LowLimit.Issuer, &current.HighLimit.Issuer, current.Balance.Value, change.Value, &current.Balance.Currency, nil)
-				balanceMap.Add(&current.HighLimit.Issuer, &current.LowLimit.Issuer, current.Balance.Value.Negate(), change.Value.Negate(), &current.Balance.Currency, nil)
+				issuer := current.HighLimit.Asset().Issuer
+				v := Value{}
+				if current.Balance.Value.Less(v) || current.Balance.Value.IsZero() {
+					issuer = current.LowLimit.Asset().Issuer
+				}
+				balanceMap.Add(&current.LowLimit.Issuer, &current.HighLimit.Issuer, current.Balance.Value, change.Value, &current.Balance.Currency, &issuer, nil)
+				balanceMap.Add(&current.HighLimit.Issuer, &current.LowLimit.Issuer, current.Balance.Value.Negate(), change.Value.Negate(), &current.Balance.Currency, &issuer, nil)
 			case AMMROOT:
 				// Used to retrieve the currency & issuer for lptokens while parsing balances
 				var (
@@ -188,7 +197,7 @@ func (txm *TransactionWithMetaData) Balances() (BalanceMap, error) {
 				if err != nil {
 					return nil, err
 				}
-				balanceMap.Add(&current.LPTokenBalance.Issuer, &current.LPTokenBalance.Issuer, current.LPTokenBalance.Value, change.Value, &current.LPTokenBalance.Currency, nil)
+				balanceMap.Add(&current.LPTokenBalance.Issuer, &current.LPTokenBalance.Issuer, current.LPTokenBalance.Value, change.Value, &current.LPTokenBalance.Currency, &current.LPTokenBalance.Asset().Issuer, nil)
 			}
 		}
 	}
