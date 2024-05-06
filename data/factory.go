@@ -24,6 +24,7 @@ const (
 	NEGATIVE_UNL     LedgerEntryType = 0x4e // 'N'
 	NFTOKEN_PAGE     LedgerEntryType = 0x50 // 'P'
 	AMMROOT          LedgerEntryType = 0x41 // 'A'
+	DID              LedgerEntryType = 0x49 // 'I'
 
 	// TODO: NFTOKEN_OFFER this needs to be tested because in source code it is defined as 0x37 but in doc as 0x0074
 	// source: https://github.com/ripple/rippled/pull/4101/files#diff-5b0d620062dd00fb5801519e62e857f3456075b1d9d02062b6a06bb0f64fffa5R162
@@ -91,6 +92,7 @@ var LedgerEntryFactory = [...]func() LedgerEntry{
 	NFTOKEN_PAGE:     func() LedgerEntry { return &NFTokenPage{leBase: leBase{LedgerEntryType: NFTOKEN_PAGE}} },
 	NFTOKEN_OFFER:    func() LedgerEntry { return &NFTokenOffer{leBase: leBase{LedgerEntryType: NFTOKEN_OFFER}} },
 	AMMROOT:          func() LedgerEntry { return &AMM{leBase: leBase{LedgerEntryType: AMMROOT}} },
+	DID:              func() LedgerEntry { return &Did{leBase: leBase{LedgerEntryType: DID}} },
 }
 
 var TxFactory = [...]func() Transaction{
@@ -148,6 +150,7 @@ var ledgerEntryNames = [...]string{
 	NFTOKEN_PAGE:     "NFTokenPage",
 	NFTOKEN_OFFER:    "NFTokenOffer",
 	AMMROOT:          "AMM",
+	DID:              "DID",
 }
 
 var ledgerEntryTypes = map[string]LedgerEntryType{
@@ -168,6 +171,7 @@ var ledgerEntryTypes = map[string]LedgerEntryType{
 	"NFTokenPage":    NFTOKEN_PAGE,
 	"NFTokenOffer":   NFTOKEN_OFFER,
 	"AMM":            AMMROOT,
+	"DID":            DID,
 }
 
 var txNames = [...]string{

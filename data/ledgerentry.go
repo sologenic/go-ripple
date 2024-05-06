@@ -248,6 +248,10 @@ type AMM struct {
 	LedgerIndex    *Hash256         `json:",omitempty"`
 }
 
+type Did struct {
+	leBase
+}
+
 func (a *AccountRoot) Affects(account Account) bool {
 	return a.Account != nil && a.Account.Equals(account)
 }
@@ -304,3 +308,5 @@ func (o *Offer) Ratio() *Value {
 func (a *AMM) AMMID() *Hash256 {
 	return a.LedgerIndex
 }
+
+func (*Did) Affects(account Account) bool { return false }
