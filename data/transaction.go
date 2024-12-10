@@ -273,6 +273,26 @@ type AMMBid struct {
 	AuthAccounts []AuthAccounts `json:",omitempty"`
 }
 
+type OracleSet struct {
+	TxBase
+	OracleDocumentID *string           `json:",omitempty"`
+	PriceDataSeries  []PriceDataSeries `json:",omitempty"`
+	Provider         *string           `json:",omitempty"`
+	LastUpdateTime   *uint32           `json:",omitempty"`
+	Date             *uint32           `json:"date,omitempty"`
+}
+
+type PriceDataSeries struct {
+	PriceData PriceData `json:",omitempty"`
+}
+
+type PriceData struct {
+	AssetPrice *string `json:",omitempty"`
+	BaseAsset  *string `json:",omitempty"`
+	QuoteAsset *string `json:",omitempty"`
+	Scale      *uint32 `json:",omitempty"`
+}
+
 func (t *TxBase) RealSequence() uint32 {
 	if t.Sequence == 0 {
 		return t.TicketSequence

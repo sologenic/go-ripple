@@ -101,6 +101,8 @@ const (
 	tecTOKEN_PAIR_NOT_FOUND
 	tecARRAY_EMPTY
 	tecARRAY_TOO_LARGE
+	tecLOCKED
+	tecBAD_CREDENTIALS
 )
 
 const (
@@ -123,7 +125,12 @@ const (
 	telCAN_NOT_QUEUE_BLOCKED
 	telCAN_NOT_QUEUE_FEE
 	telCAN_NOT_QUEUE_FULL
+	telWRONG_NETWORK
+	telREQUIRES_NETWORK_ID
+	telNETWORK_ID_MAKES_TX_NON_CANONICAL
+	telENV_RPC_FAILED
 )
+
 const (
 	// -299 .. -200: M Malformed (bad signature)
 	// Causes:
@@ -179,6 +186,7 @@ const (
 	temEMPTY_DID
 	temARRAY_EMPTY
 	temARRAY_TOO_LARGE
+	temBAD_TRANSFER_FEE
 )
 const (
 	// -199 .. -100: F Failure (sequence number previously used)
@@ -216,7 +224,9 @@ const (
 	tefTOO_BIG
 	tefNO_TICKET
 	tefNFTOKEN_IS_NOT_TRANSFERABLE
+	tefINVALID_LEDGER_FIX_TYPE
 )
+
 const (
 	// -99 .. -1: R Retry (sequence too high, no funds for txn fee, originating account non-existent)
 	// Causes:
@@ -323,6 +333,8 @@ var resultNames = map[TransactionResult]struct {
 	tecTOKEN_PAIR_NOT_FOUND:               {"tecTOKEN_PAIR_NOT_FOUND", "Token pair is not found in Oracle object."},
 	tecARRAY_EMPTY:                        {"tecARRAY_EMPTY", "Array is empty."},
 	tecARRAY_TOO_LARGE:                    {"tecARRAY_TOO_LARGE", "Array is too large."},
+	tecLOCKED:                             {"tecLOCKED", "The account is locked."},
+	tecBAD_CREDENTIALS:                    {"tecBAD_CREDENTIALS", "The credentials provided are invalid"},
 
 	tefFAILURE:                     {"tefFAILURE", "Failed to apply."},
 	tefALREADY:                     {"tefALREADY", "The exact transaction was already in this ledger."},

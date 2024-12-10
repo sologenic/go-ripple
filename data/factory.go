@@ -7,7 +7,7 @@ type LedgerEntryType uint16
 type TransactionType uint16
 
 const (
-	// LedgerEntryType values come from rippled's "LedgerFormats.h"
+	// LedgerEntryType values come from rippled's "LedgerFormats.h" (and characters from indexes.cpp)
 	SIGNER_LIST      LedgerEntryType = 0x53 // 'S'
 	TICKET           LedgerEntryType = 0x54 // 'T'
 	ACCOUNT_ROOT     LedgerEntryType = 0x61 // 'a'
@@ -23,8 +23,9 @@ const (
 	DEPOSIT_PRE_AUTH LedgerEntryType = 0x70 // 'p'
 	NEGATIVE_UNL     LedgerEntryType = 0x4e // 'N'
 	NFTOKEN_PAGE     LedgerEntryType = 0x50 // 'P'
-	AMMROOT          LedgerEntryType = 0x41 // 'A'
+	AMMROOT          LedgerEntryType = 0x79 // 'A' // Changed from 0x41: rippled use 79, somehow this works with 41 or is totally irrelevant
 	DID              LedgerEntryType = 0x49 // 'I'
+	ORACLE           LedgerEntryType = 0x80 // 'R'
 
 	// TODO: NFTOKEN_OFFER this needs to be tested because in source code it is defined as 0x37 but in doc as 0x0074
 	// source: https://github.com/ripple/rippled/pull/4101/files#diff-5b0d620062dd00fb5801519e62e857f3456075b1d9d02062b6a06bb0f64fffa5R162
@@ -62,6 +63,9 @@ const (
 	AMM_WITHDRAW TransactionType = 37
 	AMM_VOTE     TransactionType = 38
 	AMM_BID      TransactionType = 39
+	// ORACLE
+	ORACLE_SET    TransactionType = 51
+	ORACLE_DELETE TransactionType = 52
 
 	// Others:
 	AMENDMENT       TransactionType = 100
@@ -93,6 +97,7 @@ var LedgerEntryFactory = [...]func() LedgerEntry{
 	NFTOKEN_OFFER:    func() LedgerEntry { return &NFTokenOffer{leBase: leBase{LedgerEntryType: NFTOKEN_OFFER}} },
 	AMMROOT:          func() LedgerEntry { return &AMM{leBase: leBase{LedgerEntryType: AMMROOT}} },
 	DID:              func() LedgerEntry { return &Did{leBase: leBase{LedgerEntryType: DID}} },
+	// ORACLE:           func() LedgerEntry { return &OracleSet{leBase: leBase{LedgerEntryType: ORACLE}} },
 }
 
 var TxFactory = [...]func() Transaction{
@@ -127,7 +132,7 @@ var TxFactory = [...]func() Transaction{
 	AMM_WITHDRAW:         func() Transaction { return &AMMWithdraw{TxBase: TxBase{TransactionType: AMM_WITHDRAW}} },
 	AMM_VOTE:             func() Transaction { return &AMMVote{TxBase: TxBase{TransactionType: AMM_VOTE}} },
 	AMM_BID:              func() Transaction { return &AMMBid{TxBase: TxBase{TransactionType: AMM_BID}} },
-
+	ORACLE_SET:           func() Transaction { return &OracleSet{TxBase: TxBase{TransactionType: ORACLE_SET}} },
 	// The next types are not fully supported. They just added to avoid "Unknown TransactionType" error.
 	DEPOSIT_PREAUTH: func() Transaction { return &DepositPreauth{TxBase: TxBase{TransactionType: DEPOSIT_PREAUTH}} },
 }
@@ -151,6 +156,7 @@ var ledgerEntryNames = [...]string{
 	NFTOKEN_OFFER:    "NFTokenOffer",
 	AMMROOT:          "AMM",
 	DID:              "DID",
+	// ORACLE:           "Oracle",
 }
 
 var ledgerEntryTypes = map[string]LedgerEntryType{
@@ -172,6 +178,7 @@ var ledgerEntryTypes = map[string]LedgerEntryType{
 	"NFTokenOffer":   NFTOKEN_OFFER,
 	"AMM":            AMMROOT,
 	"DID":            DID,
+	// "Oracle":         ORACLE,
 }
 
 var txNames = [...]string{
@@ -207,6 +214,7 @@ var txNames = [...]string{
 	AMM_WITHDRAW:         "AMMWithdraw",
 	AMM_VOTE:             "AMMVote",
 	AMM_BID:              "AMMBid",
+	ORACLE_SET:           "OracleSet",
 }
 
 var txTypes = map[string]TransactionType{
@@ -242,6 +250,7 @@ var txTypes = map[string]TransactionType{
 	"AMMWithdraw":          AMM_WITHDRAW,
 	"AMMVote":              AMM_VOTE,
 	"AMMBid":               AMM_BID,
+	"OracleSet":            ORACLE_SET,
 }
 
 var HashableTypes []string
