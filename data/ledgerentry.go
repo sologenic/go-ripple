@@ -13,23 +13,23 @@ type leBase struct {
 
 type AccountRoot struct {
 	leBase
-	Flags            *LedgerEntryFlag `json:",omitempty"`
-	Account          *Account         `json:",omitempty"`
-	Sequence         *uint32          `json:",omitempty"`
-	Balance          *Value           `json:",omitempty"`
-	OwnerCount       *uint32          `json:",omitempty"`
-	MintedNFTokens   *uint32          `json:",omitempty"`
-	AccountTxnID     *Hash256         `json:",omitempty"`
-	RegularKey       *RegularKey      `json:",omitempty"`
-	EmailHash        *Hash128         `json:",omitempty"`
-	WalletLocator    *Hash256         `json:",omitempty"`
-	WalletSize       *uint32          `json:",omitempty"`
-	MessageKey       *VariableLength  `json:",omitempty"`
-	TransferRate     *uint32          `json:",omitempty"`
-	Domain           *VariableLength  `json:",omitempty"`
-	TickSize         *uint8           `json:",omitempty"`
-	TicketCount      *uint32          `json:",omitempty"`
-	AMMID            *Hash256         `json:",omitempty"`
+	Flags          *LedgerEntryFlag `json:",omitempty"`
+	Account        *Account         `json:",omitempty"`
+	Sequence       *uint32          `json:",omitempty"`
+	Balance        *Value           `json:",omitempty"`
+	OwnerCount     *uint32          `json:",omitempty"`
+	MintedNFTokens *uint32          `json:",omitempty"`
+	AccountTxnID   *Hash256         `json:",omitempty"`
+	RegularKey     *RegularKey      `json:",omitempty"`
+	EmailHash      *Hash128         `json:",omitempty"`
+	WalletLocator  *Hash256         `json:",omitempty"`
+	WalletSize     *uint32          `json:",omitempty"`
+	MessageKey     *VariableLength  `json:",omitempty"`
+	TransferRate   *uint32          `json:",omitempty"`
+	Domain         *VariableLength  `json:",omitempty"`
+	TickSize       *uint8           `json:",omitempty"`
+	TicketCount    *uint32          `json:",omitempty"`
+	AMMID          *Hash256         `json:",omitempty"`
 }
 
 type RippleState struct {
@@ -252,9 +252,9 @@ type Did struct {
 	leBase
 }
 
-// type Oracle struct {
-// 	leBase
-// }
+type Oracle struct {
+	leBase
+}
 
 func (a *AccountRoot) Affects(account Account) bool {
 	return a.Account != nil && a.Account.Equals(account)
@@ -315,4 +315,4 @@ func (a *AMM) AMMID() *Hash256 {
 
 func (*Did) Affects(account Account) bool { return false }
 
-// func (*Oracle) Affects(account Account) bool { return false }
+func (*Oracle) Affects(account Account) bool { return false }

@@ -275,11 +275,11 @@ type AMMBid struct {
 
 type OracleSet struct {
 	TxBase
-	OracleDocumentID *string           `json:",omitempty"`
-	PriceDataSeries  []PriceDataSeries `json:",omitempty"`
-	Provider         *string           `json:",omitempty"`
-	LastUpdateTime   *uint32           `json:",omitempty"`
-	Date             *uint32           `json:"date,omitempty"`
+	// OracleDocumentID *string           `json:",omitempty"`
+	// PriceDataSeries  []PriceDataSeries `json:",omitempty"`
+	// Provider         *string           `json:",omitempty"`
+	// LastUpdateTime   *uint32           `json:",omitempty"`
+	// Date             *uint32           `json:"date,omitempty"`
 }
 
 type PriceDataSeries struct {

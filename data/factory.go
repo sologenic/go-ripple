@@ -97,7 +97,7 @@ var LedgerEntryFactory = [...]func() LedgerEntry{
 	NFTOKEN_OFFER:    func() LedgerEntry { return &NFTokenOffer{leBase: leBase{LedgerEntryType: NFTOKEN_OFFER}} },
 	AMMROOT:          func() LedgerEntry { return &AMM{leBase: leBase{LedgerEntryType: AMMROOT}} },
 	DID:              func() LedgerEntry { return &Did{leBase: leBase{LedgerEntryType: DID}} },
-	// ORACLE:           func() LedgerEntry { return &OracleSet{leBase: leBase{LedgerEntryType: ORACLE}} },
+	ORACLE:           func() LedgerEntry { return &Oracle{leBase: leBase{LedgerEntryType: ORACLE}} },
 }
 
 var TxFactory = [...]func() Transaction{
@@ -156,7 +156,7 @@ var ledgerEntryNames = [...]string{
 	NFTOKEN_OFFER:    "NFTokenOffer",
 	AMMROOT:          "AMM",
 	DID:              "DID",
-	// ORACLE:           "Oracle",
+	ORACLE:           "Oracle",
 }
 
 var ledgerEntryTypes = map[string]LedgerEntryType{
@@ -178,7 +178,7 @@ var ledgerEntryTypes = map[string]LedgerEntryType{
 	"NFTokenOffer":   NFTOKEN_OFFER,
 	"AMM":            AMMROOT,
 	"DID":            DID,
-	// "Oracle":         ORACLE,
+	"Oracle":         ORACLE,
 }
 
 var txNames = [...]string{
