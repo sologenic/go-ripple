@@ -282,6 +282,10 @@ type OracleSet struct {
 	// Date             *uint32           `json:"date,omitempty"`
 }
 
+type OracleDelete struct {
+	TxBase
+}
+
 type PriceDataSeries struct {
 	PriceData PriceData `json:",omitempty"`
 }

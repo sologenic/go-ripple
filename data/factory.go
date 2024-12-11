@@ -133,6 +133,7 @@ var TxFactory = [...]func() Transaction{
 	AMM_VOTE:             func() Transaction { return &AMMVote{TxBase: TxBase{TransactionType: AMM_VOTE}} },
 	AMM_BID:              func() Transaction { return &AMMBid{TxBase: TxBase{TransactionType: AMM_BID}} },
 	ORACLE_SET:           func() Transaction { return &OracleSet{TxBase: TxBase{TransactionType: ORACLE_SET}} },
+	ORACLE_DELETE:        func() Transaction { return &OracleDelete{TxBase: TxBase{TransactionType: ORACLE_DELETE}} },
 	// The next types are not fully supported. They just added to avoid "Unknown TransactionType" error.
 	DEPOSIT_PREAUTH: func() Transaction { return &DepositPreauth{TxBase: TxBase{TransactionType: DEPOSIT_PREAUTH}} },
 }
@@ -215,6 +216,7 @@ var txNames = [...]string{
 	AMM_VOTE:             "AMMVote",
 	AMM_BID:              "AMMBid",
 	ORACLE_SET:           "OracleSet",
+	ORACLE_DELETE:        "OracleDelete",
 }
 
 var txTypes = map[string]TransactionType{
@@ -251,6 +253,7 @@ var txTypes = map[string]TransactionType{
 	"AMMVote":              AMM_VOTE,
 	"AMMBid":               AMM_BID,
 	"OracleSet":            ORACLE_SET,
+	"OracleDelete":         ORACLE_DELETE,
 }
 
 var HashableTypes []string
