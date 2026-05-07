@@ -7,7 +7,7 @@ require (
 	github.com/btcsuite/btcd v0.22.0-beta.0.20220111032746-97732e52810c
 	github.com/btcsuite/btcd/btcec/v2 v2.1.0
 	github.com/fatih/color v1.13.0
-	github.com/golang/glog v1.0.0
+	github.com/golang/glog v1.2.4
 	github.com/gorilla/websocket v1.5.0
 	github.com/juju/testing v0.0.0-20220202055744-1ad0816210a6
 	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838
