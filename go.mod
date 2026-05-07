@@ -4,8 +4,7 @@ go 1.19
 
 require (
 	github.com/bits-and-blooms/bitset v1.2.1
-	github.com/btcsuite/btcd v0.22.0-beta.0.20220111032746-97732e52810c
-	github.com/btcsuite/btcd/btcec/v2 v2.1.0
+	github.com/btcsuite/btcd/btcec/v2 v2.1.3
 	github.com/fatih/color v1.13.0
 	github.com/golang/glog v1.0.0
 	github.com/gorilla/websocket v1.5.0
