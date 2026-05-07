@@ -1,6 +1,6 @@
 module github.com/sologenic/go-ripple
 
-go 1.19
+go 1.24.0
 
 require (
 	github.com/bits-and-blooms/bitset v1.2.1
@@ -10,7 +10,7 @@ require (
 	github.com/golang/glog v1.0.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/juju/testing v0.0.0-20220202055744-1ad0816210a6
-	golang.org/x/crypto v0.0.0-20220131195533-30dcbda58838
+	golang.org/x/crypto v0.45.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
 )
 
@@ -23,6 +23,6 @@ require (
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
-	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
+	golang.org/x/sys v0.38.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
